@@ -125,141 +125,106 @@ initials.value = (auth.user?.display_name || auth.user?.email || 'C')
         </div>
       </div>
 
-      <!-- Right: Phone Simulator — matches actual Flutter app -->
+      <!-- Right: Phone Simulator — Expert/Speaker Profile (Glo-style) -->
       <div class="simulator-panel">
         <PhoneSimulator label="iPhone 17 Pro">
           <div class="bf-app">
-            <!-- Gradient Header — matches Flutter profile_page.dart headerGradient -->
-            <div class="bf-header">
-              <div class="bf-header-top">
-                <span class="bf-header-title">Profile</span>
-              </div>
+            <!-- Back + Share buttons -->
+            <div class="bf-topbar">
+              <div class="bf-back-btn">‹</div>
+              <div class="bf-back-btn">⇪</div>
+            </div>
 
-              <!-- Avatar Row — horizontal layout, 72px rounded-square -->
-              <div class="bf-avatar-row">
-                <div class="bf-avatar-wrap">
-                  <div class="bf-avatar">{{ initials }}</div>
-                </div>
-                <div class="bf-user-info">
-                  <div class="bf-user-name">{{ form.display_name || 'Creator' }}</div>
-                  <div class="bf-user-email">{{ auth.user?.email || 'creator@betterbliss.com' }}</div>
-                  <div class="bf-signout-pill">
-                    <span class="bf-signout-icon">⎋</span> Sign Out
-                  </div>
-                </div>
-              </div>
+            <!-- Name + Specialties + Class count -->
+            <div class="bf-expert-header">
+              <div class="bf-expert-name">{{ form.display_name || 'Creator Name' }}</div>
+              <div class="bf-expert-specialties">Wellness, Meditation, Mindfulness</div>
+              <div class="bf-expert-classes">12 classes</div>
+              <div class="bf-follow-btn">Follow</div>
+            </div>
 
-              <!-- Goals Stats Row — surface card -->
-              <div class="bf-goals-row">
-                <div class="bf-goal-item">
-                  <div class="bf-goal-icon">🧘</div>
-                  <div class="bf-goal-progress">
-                    <div class="bf-goal-bar"><div class="bf-goal-fill" style="width:72%"></div></div>
-                    <span class="bf-goal-label">Meditation</span>
+            <!-- Big Portrait Photo (3:4 ratio) -->
+            <div class="bf-portrait">
+              <div class="bf-portrait-placeholder">
+                <span class="bf-portrait-initials">{{ initials }}</span>
+              </div>
+            </div>
+
+            <!-- About / Bio -->
+            <div class="bf-about-section">
+              <div class="bf-section-heading">About</div>
+              <div class="bf-bio-text">{{ form.bio || 'Wellness expert dedicated to helping people find balance through meditation, breathwork, and mindful movement.' }}</div>
+            </div>
+
+            <!-- Social Links — colored pills -->
+            <div class="bf-social-links">
+              <div v-if="form.social_instagram" class="bf-link-pill bf-link-instagram">
+                <span class="bf-link-icon">📷</span> Instagram
+              </div>
+              <div v-if="form.social_youtube" class="bf-link-pill bf-link-youtube">
+                <span class="bf-link-icon">▶</span> YouTube
+              </div>
+              <div v-if="form.website" class="bf-link-pill bf-link-website">
+                <span class="bf-link-icon">🔗</span> Website
+              </div>
+              <div v-if="!form.social_instagram && !form.social_youtube && !form.website" class="bf-link-pill bf-link-website">
+                <span class="bf-link-icon">🔗</span> Website
+              </div>
+            </div>
+
+            <!-- Classes by this expert — horizontal scroll -->
+            <div class="bf-classes-section">
+              <div class="bf-section-heading">Classes by {{ form.display_name?.split(' ')[0] || 'Creator' }}</div>
+              <div class="bf-classes-scroll">
+                <div class="bf-class-card">
+                  <div class="bf-class-thumb bf-grad-1">
+                    <span class="bf-play-icon">▶</span>
+                    <span class="bf-duration">12:30</span>
                   </div>
+                  <div class="bf-class-title">Morning Meditation</div>
+                  <div class="bf-class-cat">Mindfulness</div>
                 </div>
-                <div class="bf-goal-divider"></div>
-                <div class="bf-goal-item">
-                  <div class="bf-goal-icon">💪</div>
-                  <div class="bf-goal-progress">
-                    <div class="bf-goal-bar"><div class="bf-goal-fill" style="width:45%; background:#7C3AED"></div></div>
-                    <span class="bf-goal-label">Fitness</span>
+                <div class="bf-class-card">
+                  <div class="bf-class-thumb bf-grad-2">
+                    <span class="bf-play-icon">▶</span>
+                    <span class="bf-duration">8:15</span>
                   </div>
+                  <div class="bf-class-title">Breathwork Basics</div>
+                  <div class="bf-class-cat">Breathing</div>
                 </div>
-                <div class="bf-goal-divider"></div>
-                <div class="bf-goal-item">
-                  <div class="bf-goal-icon">📖</div>
-                  <div class="bf-goal-progress">
-                    <div class="bf-goal-bar"><div class="bf-goal-fill" style="width:90%; background:#22C55E"></div></div>
-                    <span class="bf-goal-label">Reading</span>
+                <div class="bf-class-card">
+                  <div class="bf-class-thumb bf-grad-3">
+                    <span class="bf-play-icon">▶</span>
+                    <span class="bf-duration">22:00</span>
                   </div>
+                  <div class="bf-class-title">Deep Sleep Guide</div>
+                  <div class="bf-class-cat">Sleep</div>
                 </div>
               </div>
             </div>
 
-            <!-- Theme Toggle Card -->
-            <div class="bf-section">
-              <div class="bf-theme-card">
-                <div class="bf-theme-icon">🌙</div>
-                <div class="bf-theme-info">
-                  <div class="bf-theme-title">Dark Theme</div>
-                  <div class="bf-theme-sub">Tap to switch to Light mode</div>
+            <!-- Series rows -->
+            <div class="bf-series-section">
+              <div class="bf-section-heading">Series</div>
+              <div class="bf-series-row">
+                <div class="bf-series-thumb bf-grad-4"></div>
+                <div class="bf-series-info">
+                  <div class="bf-series-title">Daily Calm</div>
+                  <div class="bf-series-meta">8 episodes</div>
                 </div>
-                <span class="bf-swap">⇆</span>
+                <span class="bf-chevron">›</span>
+              </div>
+              <div class="bf-series-row">
+                <div class="bf-series-thumb bf-grad-5"></div>
+                <div class="bf-series-info">
+                  <div class="bf-series-title">Stress Relief</div>
+                  <div class="bf-series-meta">5 episodes</div>
+                </div>
+                <span class="bf-chevron">›</span>
               </div>
             </div>
 
-            <!-- Membership Card — dark gradient -->
-            <div class="bf-section">
-              <div class="bf-section-title">Membership</div>
-              <div class="bf-membership-card">
-                <div class="bf-member-top">
-                  <div class="bf-member-icon">⭐</div>
-                  <div>
-                    <div class="bf-member-plan">Free Plan</div>
-                    <div class="bf-member-desc">Limited access to content</div>
-                  </div>
-                </div>
-                <div class="bf-member-divider"></div>
-                <div class="bf-member-bottom">
-                  <span class="bf-member-cta-text">Upgrade to unlock all content</span>
-                  <div class="bf-member-btn">Upgrade</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Settings List -->
-            <div class="bf-section">
-              <div class="bf-section-title">Settings</div>
-              <div class="bf-settings-card">
-                <div class="bf-setting-item">
-                  <span class="bf-setting-icon">👤</span>
-                  <span class="bf-setting-label">Account Settings</span>
-                  <span class="bf-chevron">›</span>
-                </div>
-                <div class="bf-setting-item">
-                  <span class="bf-setting-icon">🔐</span>
-                  <span class="bf-setting-label">Change Password</span>
-                  <span class="bf-chevron">›</span>
-                </div>
-                <div class="bf-setting-item">
-                  <span class="bf-setting-icon">🔔</span>
-                  <span class="bf-setting-label">Notifications</span>
-                  <span class="bf-chevron">›</span>
-                </div>
-                <div class="bf-setting-item bf-setting-last">
-                  <span class="bf-setting-icon">❓</span>
-                  <span class="bf-setting-label">Help & Support</span>
-                  <span class="bf-chevron">›</span>
-                </div>
-              </div>
-            </div>
-
-            <div style="height:70px"></div>
-
-            <!-- Bottom Nav — glassmorphism, 5 tabs -->
-            <div class="bf-bottom-nav">
-              <div class="bf-nav-item">
-                <span class="bf-nav-icon">🏠</span>
-                <span class="bf-nav-label">Home</span>
-              </div>
-              <div class="bf-nav-item">
-                <span class="bf-nav-icon">🔥</span>
-                <span class="bf-nav-label">Calories</span>
-              </div>
-              <div class="bf-nav-item">
-                <span class="bf-nav-icon">🧭</span>
-                <span class="bf-nav-label">Explore</span>
-              </div>
-              <div class="bf-nav-item">
-                <span class="bf-nav-icon">📋</span>
-                <span class="bf-nav-label">Classes</span>
-              </div>
-              <div class="bf-nav-item bf-nav-active">
-                <div class="bf-nav-avatar">{{ initials.charAt(0) }}</div>
-                <span class="bf-nav-label bf-nav-label-active">Profile</span>
-              </div>
-            </div>
+            <div style="height:24px"></div>
           </div>
         </PhoneSimulator>
       </div>
@@ -313,266 +278,222 @@ initials.value = (auth.user?.display_name || auth.user?.email || 'C')
 .simulator-panel { position: sticky; top: 24px; display: flex; justify-content: center; }
 
 /* ═══════════════════════════════════════════════
-   BetterFeel Mobile App — Accurate Flutter Replica
-   Colors from app_theme.dart ThemeColors (dark mode)
+   Expert/Speaker Profile — Glo-style (speaker_page.dart)
+   Dark mode #0A0A0A bg, Inter font, iOS-native feel
    ═══════════════════════════════════════════════ */
 .bf-app {
   font-family: 'Inter', -apple-system, 'SF Pro Display', system-ui, sans-serif;
   background: #0A0A0A;
   min-height: 100%;
-  position: relative;
 }
 
-/* Header — gradient from primaryColor (0A84FF) at 30% to bg */
-.bf-header {
-  background: linear-gradient(to bottom, rgba(10, 132, 255, 0.3), #0A0A0A);
-  padding: 16px 16px 0;
-}
-.bf-header-top {
+/* Top bar — back + share circles */
+.bf-topbar {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+  padding: 10px 14px 0;
 }
-.bf-header-title {
-  font-size: 22px;
-  font-weight: 700;
-  color: #fff;
-}
-
-/* Avatar Row — horizontal, 72px rounded-square */
-.bf-avatar-row {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 20px;
-}
-.bf-avatar-wrap {
-  padding: 3px;
-  border-radius: 16px;
-  border: 2px solid #fff;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
-}
-.bf-avatar {
-  width: 56px;
-  height: 56px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.8), #666);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  font-weight: 700;
-  color: #fff;
-}
-.bf-user-info { flex: 1; min-width: 0; }
-.bf-user-name {
-  font-size: 17px;
-  font-weight: 700;
-  color: #fff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.bf-user-email {
-  font-size: 11px;
-  color: rgba(156, 163, 175, 0.8);
-  margin-top: 2px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.bf-signout-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  margin-top: 6px;
-  padding: 3px 10px;
-  background: rgba(255, 69, 58, 0.15);
-  border: 1px solid rgba(255, 69, 58, 0.3);
-  border-radius: 10px;
-  font-size: 10px;
-  font-weight: 500;
-  color: #FF453A;
-}
-.bf-signout-icon { font-size: 10px; }
-
-/* Goals Stats Row */
-.bf-goals-row {
-  display: flex;
-  align-items: center;
+.bf-back-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
   background: #1C1C1E;
-  border-radius: 16px;
   border: 1px solid #2C2C2E;
-  padding: 14px 10px;
-  margin-bottom: 16px;
-}
-.bf-goal-item {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-}
-.bf-goal-icon { font-size: 18px; }
-.bf-goal-progress { width: 100%; padding: 0 6px; }
-.bf-goal-bar {
-  width: 100%;
-  height: 4px;
-  background: #2C2C2E;
-  border-radius: 2px;
-  overflow: hidden;
-}
-.bf-goal-fill {
-  height: 100%;
-  background: #0A84FF;
-  border-radius: 2px;
-  transition: width 0.6s ease;
-}
-.bf-goal-label {
-  font-size: 9px;
-  color: #9CA3AF;
-  text-align: center;
-  display: block;
-  margin-top: 2px;
-}
-.bf-goal-divider {
-  width: 1px;
-  height: 36px;
-  background: rgba(156, 163, 175, 0.2);
-  flex-shrink: 0;
-}
-
-/* Sections */
-.bf-section { padding: 0 16px; margin-bottom: 16px; }
-.bf-section-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: #0A84FF;
-  margin-bottom: 10px;
-  letter-spacing: 0.02em;
-}
-
-/* Theme Toggle Card */
-.bf-theme-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px;
-  background: linear-gradient(135deg, rgba(75,75,75,0.3), rgba(45,45,45,0.2));
-  border-radius: 16px;
-  border: 1px solid rgba(156, 163, 175, 0.2);
-}
-.bf-theme-icon {
-  width: 36px;
-  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(156, 163, 175, 0.15);
-  border-radius: 10px;
+  color: #fff;
   font-size: 18px;
+  font-weight: 300;
 }
-.bf-theme-info { flex: 1; }
-.bf-theme-title { font-size: 13px; font-weight: 600; color: #fff; }
-.bf-theme-sub { font-size: 10px; color: rgba(156, 163, 175, 0.7); margin-top: 1px; }
-.bf-swap { font-size: 18px; color: #9CA3AF; }
 
-/* Membership Card */
-.bf-membership-card {
-  background: linear-gradient(135deg, #404040, #2D2D2D, #1A1A1A);
-  border-radius: 16px;
-  padding: 16px;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+/* Expert Header — name is BIG */
+.bf-expert-header {
+  padding: 18px 18px 0;
 }
-.bf-member-top { display: flex; align-items: center; gap: 10px; }
-.bf-member-icon {
-  width: 36px; height: 36px;
-  display: flex; align-items: center; justify-content: center;
-  background: rgba(255,255,255,0.2);
-  border-radius: 10px;
-  font-size: 18px;
+.bf-expert-name {
+  font-size: 24px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.15;
+  margin-bottom: 8px;
 }
-.bf-member-plan { font-size: 14px; font-weight: 700; color: #fff; }
-.bf-member-desc { font-size: 10px; color: rgba(255,255,255,0.8); }
-.bf-member-divider { height: 1px; background: rgba(255,255,255,0.3); margin: 12px 0; }
-.bf-member-bottom { display: flex; justify-content: space-between; align-items: center; }
-.bf-member-cta-text { font-size: 10px; color: #fff; flex: 1; line-height: 1.4; }
-.bf-member-btn {
-  padding: 6px 14px;
+.bf-expert-specialties {
+  font-size: 12px;
+  color: #9CA3AF;
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+.bf-expert-classes {
+  font-size: 11px;
+  color: #9CA3AF;
+  margin-bottom: 14px;
+}
+.bf-follow-btn {
+  display: inline-block;
+  padding: 10px 24px;
   background: #fff;
   color: #000;
-  border-radius: 10px;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
-  flex-shrink: 0;
+  border-radius: 22px;
+  font-family: 'Inter', sans-serif;
 }
 
-/* Settings List */
-.bf-settings-card {
-  background: #1C1C1E;
-  border-radius: 16px;
-  border: 1px solid #2C2C2E;
+/* Portrait Photo — 3:4 ratio, edge-to-edge */
+.bf-portrait {
+  margin-top: 18px;
+  aspect-ratio: 3 / 4;
+  width: 100%;
   overflow: hidden;
 }
-.bf-setting-item {
+.bf-portrait-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(145deg, #1C1C1E, #2C2C2E, #1A1A2E);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bf-portrait-initials {
+  font-size: 56px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.15);
+  font-family: 'Inter', sans-serif;
+}
+
+/* About / Bio */
+.bf-about-section {
+  padding: 20px 18px 0;
+}
+.bf-section-heading {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 8px;
+}
+.bf-bio-text {
+  font-size: 12px;
+  color: #9CA3AF;
+  line-height: 1.6;
+}
+
+/* Social link pills */
+.bf-social-links {
+  padding: 14px 18px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.bf-link-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #fff;
+}
+.bf-link-icon { font-size: 12px; }
+.bf-link-instagram { background: rgba(228, 64, 95, 0.2); border: 1px solid rgba(228, 64, 95, 0.3); color: #E4405F; }
+.bf-link-youtube { background: rgba(255, 0, 0, 0.15); border: 1px solid rgba(255, 0, 0, 0.25); color: #FF4444; }
+.bf-link-website { background: rgba(10, 132, 255, 0.15); border: 1px solid rgba(10, 132, 255, 0.25); color: #0A84FF; }
+
+/* Classes — horizontal scroll cards */
+.bf-classes-section {
+  padding: 20px 0 0 18px;
+}
+.bf-classes-scroll {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  padding-right: 18px;
+}
+.bf-classes-scroll::-webkit-scrollbar { display: none; }
+.bf-class-card {
+  flex-shrink: 0;
+  width: 140px;
+}
+.bf-class-thumb {
+  width: 140px;
+  height: 100px;
+  border-radius: 12px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bf-grad-1 { background: linear-gradient(135deg, #0A84FF, #7C3AED); }
+.bf-grad-2 { background: linear-gradient(135deg, #22C55E, #0A84FF); }
+.bf-grad-3 { background: linear-gradient(135deg, #7C3AED, #EC4899); }
+.bf-grad-4 { background: linear-gradient(135deg, #F59E0B, #EF4444); }
+.bf-grad-5 { background: linear-gradient(135deg, #06B6D4, #3B82F6); }
+.bf-play-icon {
+  font-size: 20px;
+  color: rgba(255,255,255,0.7);
+}
+.bf-duration {
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+  padding: 2px 6px;
+  background: rgba(0,0,0,0.6);
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 600;
+  color: #fff;
+}
+.bf-class-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  margin-top: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bf-class-cat {
+  font-size: 9px;
+  color: #9CA3AF;
+}
+
+/* Series rows */
+.bf-series-section {
+  padding: 20px 18px 0;
+}
+.bf-series-row {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 14px 14px;
-  border-bottom: 1px solid #2C2C2E;
+  padding: 10px;
+  background: #1A1A1A;
+  border-radius: 14px;
+  border: 1px solid #2C2C2E;
+  margin-bottom: 8px;
 }
-.bf-setting-last { border-bottom: none; }
-.bf-setting-icon { font-size: 16px; width: 20px; text-align: center; }
-.bf-setting-label { flex: 1; font-size: 13px; color: #fff; font-weight: 400; }
-.bf-chevron { font-size: 18px; color: #9CA3AF; }
-
-/* Bottom Nav — glassmorphism, blur sigma 24 */
-.bf-bottom-nav {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  padding: 8px 4px 18px;
-  background: rgba(0, 0, 0, 0.88);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-top: 0.5px solid rgba(255, 255, 255, 0.06);
+.bf-series-thumb {
+  width: 50px;
+  height: 36px;
+  border-radius: 8px;
+  flex-shrink: 0;
 }
-.bf-nav-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  width: 44px;
-}
-.bf-nav-icon { font-size: 18px; filter: grayscale(0.7) opacity(0.54); }
-.bf-nav-active .bf-nav-icon { filter: none; }
-.bf-nav-label {
-  font-size: 8px;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.54);
-  font-family: 'Inter', sans-serif;
-}
-.bf-nav-label-active {
-  color: #fff;
+.bf-series-info { flex: 1; min-width: 0; }
+.bf-series-title {
+  font-size: 12px;
   font-weight: 600;
+  color: #fff;
 }
-.bf-nav-avatar {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: #fff;
-  color: #000;
-  font-size: 9px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Inter', sans-serif;
+.bf-series-meta {
+  font-size: 10px;
+  color: #9CA3AF;
+  margin-top: 1px;
+}
+.bf-chevron {
+  font-size: 18px;
+  color: #9CA3AF;
+  flex-shrink: 0;
 }
 
 @media (max-width: 1100px) {
