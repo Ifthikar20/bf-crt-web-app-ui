@@ -1,13 +1,19 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { seriesApi } from '../api'
+import { useAuthStore } from '../store'
 import PhoneSimulator from '../components/PhoneSimulator.vue'
 
+const auth = useAuthStore()
 const seriesList = ref([])
 const showForm = ref(false)
 const showDetail = ref(null)
 const form = ref({ title: '', description: '' })
 const loading = ref(true)
+
+const initials = ref('')
+initials.value = (auth.user?.display_name || auth.user?.email || 'C')
+  .split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
 
 onMounted(fetchSeries)
 
@@ -39,14 +45,13 @@ async function togglePublish(series) {
   } catch (err) { console.error('Toggle failed:', err) }
 }
 
-// Colors for series cards in the simulator
-const seriesColors = [
-  'linear-gradient(135deg, #667eea, #764ba2)',
-  'linear-gradient(135deg, #f093fb, #f5576c)',
-  'linear-gradient(135deg, #4facfe, #00f2fe)',
-  'linear-gradient(135deg, #43e97b, #38f9d7)',
-  'linear-gradient(135deg, #fa709a, #fee140)',
-  'linear-gradient(135deg, #a18cd1, #fbc2eb)',
+const categoryGradients = [
+  'linear-gradient(135deg, #0A84FF, #7C3AED)',
+  'linear-gradient(135deg, #7C3AED, #EC4899)',
+  'linear-gradient(135deg, #22C55E, #0A84FF)',
+  'linear-gradient(135deg, #F59E0B, #EF4444)',
+  'linear-gradient(135deg, #06B6D4, #3B82F6)',
+  'linear-gradient(135deg, #8B5CF6, #D946EF)',
 ]
 </script>
 
@@ -92,80 +97,121 @@ const seriesColors = [
         </div>
       </div>
 
-      <!-- Right: Phone Simulator -->
+      <!-- Right: Phone Simulator — Flutter Explore page style -->
       <div class="simulator-panel">
         <PhoneSimulator label="iPhone 17 Pro">
-          <div class="mobile-series">
-            <!-- Mobile Header -->
-            <div class="mob-header">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-              <span class="mob-header-title">Series</span>
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            </div>
+          <div class="bf-app">
+            <!-- Explore Header -->
+            <div class="bf-explore-header">
+              <div class="bf-explore-top">
+                <span class="bf-explore-title">Explore</span>
+                <div class="bf-search-icon">🔍</div>
+              </div>
 
-            <!-- Featured Series Banner -->
-            <div class="mob-featured">
-              <div class="mob-featured-overlay">
-                <div class="mob-featured-badge">FEATURED</div>
-                <h4 class="mob-featured-title">{{ seriesList[0]?.title || 'Your Series' }}</h4>
-                <p class="mob-featured-desc">{{ seriesList[0]?.description?.substring(0, 60) || 'Create a series to see it here' }}{{ seriesList[0]?.description?.length > 60 ? '...' : '' }}</p>
+              <!-- Category Chips (horizontal scroll) -->
+              <div class="bf-chips-row">
+                <div class="bf-chip bf-chip-active">For You</div>
+                <div class="bf-chip">Meditation</div>
+                <div class="bf-chip">Fitness</div>
+                <div class="bf-chip">Sleep</div>
               </div>
             </div>
 
-            <!-- Series Section -->
-            <div class="mob-section">
-              <div class="mob-section-header">
-                <span class="mob-section-title">Your Series</span>
-                <span class="mob-section-count">{{ seriesList.length }} total</span>
+            <!-- Featured Series -->
+            <div class="bf-featured-section">
+              <div class="bf-featured-header">
+                <span class="bf-featured-label">Featured Series</span>
+                <span class="bf-see-all">See All</span>
+              </div>
+
+              <div class="bf-featured-card" :style="{ background: categoryGradients[0] }">
+                <div class="bf-featured-overlay">
+                  <div class="bf-featured-badge">SERIES</div>
+                  <div class="bf-featured-name">{{ seriesList[0]?.title || 'Your First Series' }}</div>
+                  <div class="bf-featured-meta">{{ seriesList[0]?.episodes?.length || 0 }} episodes</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Your Series in "Programs" style -->
+            <div class="bf-programs-section">
+              <div class="bf-featured-header">
+                <span class="bf-featured-label">Your Programs</span>
+                <span class="bf-series-count">{{ seriesList.length }}</span>
               </div>
 
               <!-- Empty State -->
-              <div v-if="seriesList.length === 0" class="mob-empty">
-                <div class="mob-empty-icon">📚</div>
-                <p>No series yet</p>
+              <div v-if="seriesList.length === 0" class="bf-empty">
+                <div class="bf-empty-icon">📚</div>
+                <div class="bf-empty-text">No series yet</div>
               </div>
 
-              <!-- Series Cards -->
-              <div v-for="(series, idx) in seriesList" :key="series.id" class="mob-series-card">
-                <div class="mob-series-thumb" :style="{ background: seriesColors[idx % seriesColors.length] }">
-                  <div class="mob-series-ep-count">{{ series.episodes?.length || 0 }}</div>
+              <!-- Series Cards — matches Flutter card style -->
+              <div v-for="(series, idx) in seriesList.slice(0, 4)" :key="series.id" class="bf-program-card">
+                <div class="bf-program-thumb" :style="{ background: categoryGradients[idx % categoryGradients.length] }">
+                  <div class="bf-program-count">{{ series.episodes?.length || 0 }}</div>
                 </div>
-                <div class="mob-series-info">
-                  <div class="mob-series-title">{{ series.title }}</div>
-                  <div class="mob-series-meta">
-                    <span :class="series.is_published ? 'mob-status-pub' : 'mob-status-draft'">
-                      {{ series.is_published ? '● Published' : '○ Draft' }}
+                <div class="bf-program-info">
+                  <div class="bf-program-title">{{ series.title || 'Untitled' }}</div>
+                  <div class="bf-program-meta">
+                    <span :class="series.is_published ? 'bf-pub' : 'bf-draft'">
+                      {{ series.is_published ? '● Live' : '○ Draft' }}
                     </span>
-                    <span>· {{ series.episodes?.length || 0 }} episodes</span>
+                    · {{ series.episodes?.length || 0 }} episodes
                   </div>
                 </div>
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#94a3b8" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                <span class="bf-arrow">›</span>
               </div>
             </div>
 
-            <!-- Discover Section -->
-            <div class="mob-section">
-              <div class="mob-section-header">
-                <span class="mob-section-title">Discover</span>
-                <span class="mob-section-count">Popular</span>
+            <!-- Categories Section -->
+            <div class="bf-programs-section">
+              <div class="bf-featured-header">
+                <span class="bf-featured-label">Browse Categories</span>
               </div>
-              <div class="mob-discover-grid">
-                <div class="mob-discover-card" style="background: linear-gradient(135deg, #667eea, #764ba2);">
-                  <span>🧘</span>
-                  <div>Mindfulness</div>
+              <div class="bf-category-grid">
+                <div class="bf-cat-item" style="background: linear-gradient(135deg, #0A84FF, #7C3AED)">
+                  <span class="bf-cat-emoji">🧘</span>
+                  <span class="bf-cat-name">Mindfulness</span>
                 </div>
-                <div class="mob-discover-card" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
-                  <span>💪</span>
-                  <div>Fitness</div>
+                <div class="bf-cat-item" style="background: linear-gradient(135deg, #22C55E, #0A84FF)">
+                  <span class="bf-cat-emoji">💪</span>
+                  <span class="bf-cat-name">Fitness</span>
                 </div>
-                <div class="mob-discover-card" style="background: linear-gradient(135deg, #43e97b, #38f9d7);">
-                  <span>🥗</span>
-                  <div>Nutrition</div>
+                <div class="bf-cat-item" style="background: linear-gradient(135deg, #7C3AED, #EC4899)">
+                  <span class="bf-cat-emoji">🥗</span>
+                  <span class="bf-cat-name">Nutrition</span>
                 </div>
-                <div class="mob-discover-card" style="background: linear-gradient(135deg, #fa709a, #fee140);">
-                  <span>😴</span>
-                  <div>Sleep</div>
+                <div class="bf-cat-item" style="background: linear-gradient(135deg, #F59E0B, #EF4444)">
+                  <span class="bf-cat-emoji">😴</span>
+                  <span class="bf-cat-name">Sleep</span>
                 </div>
+              </div>
+            </div>
+
+            <div style="height:70px"></div>
+
+            <!-- Bottom Nav -->
+            <div class="bf-bottom-nav">
+              <div class="bf-nav-item">
+                <span class="bf-nav-icon">🏠</span>
+                <span class="bf-nav-label">Home</span>
+              </div>
+              <div class="bf-nav-item">
+                <span class="bf-nav-icon">🔥</span>
+                <span class="bf-nav-label">Calories</span>
+              </div>
+              <div class="bf-nav-item bf-nav-active">
+                <span class="bf-nav-icon">🧭</span>
+                <span class="bf-nav-label bf-nav-label-active">Explore</span>
+              </div>
+              <div class="bf-nav-item">
+                <span class="bf-nav-icon">📋</span>
+                <span class="bf-nav-label">Classes</span>
+              </div>
+              <div class="bf-nav-item">
+                <div class="bf-nav-avatar-inactive">{{ initials.charAt(0) }}</div>
+                <span class="bf-nav-label">Profile</span>
               </div>
             </div>
           </div>
@@ -236,7 +282,6 @@ const seriesColors = [
 
 <style scoped>
 .series-page { padding: 32px; max-width: 1400px; }
-
 .series-main-layout {
   display: grid;
   grid-template-columns: 1fr 320px;
@@ -244,162 +289,239 @@ const seriesColors = [
   align-items: start;
 }
 .series-list-area { min-width: 0; }
+.simulator-panel { position: sticky; top: 24px; display: flex; justify-content: center; }
 
-.simulator-panel {
-  position: sticky;
-  top: 24px;
-  display: flex;
-  justify-content: center;
-}
-
-/* ═══════ Mobile Series Preview ═══════ */
-.mobile-series {
-  font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+/* ═══════════════════════════════════════════════
+   BetterFeel Mobile — Explore/Series View
+   Matches Flutter app_theme.dart dark mode tokens
+   ═══════════════════════════════════════════════ */
+.bf-app {
+  font-family: 'Inter', -apple-system, 'SF Pro Display', system-ui, sans-serif;
+  background: #0A0A0A;
   min-height: 100%;
-  background: #f8f9fa;
-}
-
-.mob-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 14px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-}
-.mob-header-title {
-  font-size: 15px;
-  font-weight: 600;
-  color: #fff;
-}
-
-.mob-featured {
-  height: 140px;
-  background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
   position: relative;
-  display: flex;
-  align-items: flex-end;
-}
-.mob-featured-overlay {
-  padding: 14px;
-  width: 100%;
-  background: linear-gradient(transparent, rgba(0,0,0,0.45));
-}
-.mob-featured-badge {
-  display: inline-block;
-  padding: 2px 8px;
-  background: rgba(255,255,255,0.2);
-  backdrop-filter: blur(4px);
-  border-radius: 4px;
-  font-size: 9px;
-  font-weight: 700;
-  color: #fff;
-  letter-spacing: 0.08em;
-  margin-bottom: 4px;
-}
-.mob-featured-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: #fff;
-  margin: 0;
-}
-.mob-featured-desc {
-  font-size: 11px;
-  color: rgba(255,255,255,0.8);
-  margin: 2px 0 0;
 }
 
-.mob-section {
-  padding: 14px;
+/* Explore Header */
+.bf-explore-header {
+  background: linear-gradient(to bottom, rgba(10, 132, 255, 0.25), #0A0A0A);
+  padding: 16px 16px 12px;
 }
-.mob-section-header {
+.bf-explore-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.bf-explore-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+}
+.bf-search-icon {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  background: #1C1C1E;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+/* Category Chips */
+.bf-chips-row {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+.bf-chips-row::-webkit-scrollbar { display: none; }
+.bf-chip {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #9CA3AF;
+  background: #1C1C1E;
+  border: 1px solid #2C2C2E;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.bf-chip-active {
+  background: #0A84FF;
+  color: #fff;
+  border-color: #0A84FF;
+  font-weight: 600;
+}
+
+/* Featured Series */
+.bf-featured-section { padding: 16px; }
+.bf-featured-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
 }
-.mob-section-title {
+.bf-featured-label {
   font-size: 14px;
   font-weight: 700;
-  color: #1a1a2e;
+  color: #fff;
 }
-.mob-section-count {
+.bf-see-all {
   font-size: 11px;
-  color: #94a3b8;
+  color: #0A84FF;
+  font-weight: 500;
+}
+.bf-series-count {
+  font-size: 11px;
+  color: #9CA3AF;
 }
 
-.mob-empty {
+.bf-featured-card {
+  height: 130px;
+  border-radius: 16px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  position: relative;
+}
+.bf-featured-overlay {
+  padding: 14px;
+  width: 100%;
+  background: linear-gradient(transparent, rgba(0,0,0,0.5));
+}
+.bf-featured-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(4px);
+  border-radius: 4px;
+  font-size: 8px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+}
+.bf-featured-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+}
+.bf-featured-meta {
+  font-size: 10px;
+  color: rgba(255,255,255,0.8);
+  margin-top: 2px;
+}
+
+/* Programs Section */
+.bf-programs-section { padding: 0 16px 16px; }
+
+.bf-empty {
   text-align: center;
-  padding: 20px;
-  color: #94a3b8;
+  padding: 24px 0;
 }
-.mob-empty-icon { font-size: 28px; margin-bottom: 6px; }
-.mob-empty p { font-size: 12px; margin: 0; }
+.bf-empty-icon { font-size: 28px; margin-bottom: 6px; }
+.bf-empty-text { font-size: 11px; color: #9CA3AF; }
 
-.mob-series-card {
+.bf-program-card {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px;
-  background: #fff;
-  border-radius: 10px;
+  gap: 12px;
+  padding: 12px;
+  background: #1C1C1E;
+  border-radius: 16px;
+  border: 1px solid #2C2C2E;
   margin-bottom: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
 }
-.mob-series-thumb {
+.bf-program-thumb {
   width: 48px;
   height: 48px;
-  border-radius: 10px;
+  border-radius: 12px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.mob-series-ep-count {
+.bf-program-count {
   font-size: 16px;
   font-weight: 800;
   color: rgba(255,255,255,0.9);
 }
-.mob-series-info {
-  flex: 1;
-  min-width: 0;
-}
-.mob-series-title {
+.bf-program-info { flex: 1; min-width: 0; }
+.bf-program-title {
   font-size: 13px;
   font-weight: 600;
-  color: #1a1a2e;
+  color: #fff;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.mob-series-meta {
+.bf-program-meta {
   font-size: 10px;
-  color: #94a3b8;
+  color: #9CA3AF;
   margin-top: 2px;
-  display: flex;
-  gap: 4px;
 }
-.mob-status-pub { color: #16a34a; }
-.mob-status-draft { color: #f59e0b; }
+.bf-pub { color: #22C55E; }
+.bf-draft { color: #F59E0B; }
+.bf-arrow { font-size: 20px; color: #9CA3AF; flex-shrink: 0; }
 
-.mob-discover-grid {
+/* Category Grid */
+.bf-category-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
 }
-.mob-discover-card {
-  padding: 14px 10px;
-  border-radius: 12px;
+.bf-cat-item {
+  padding: 16px 10px;
+  border-radius: 14px;
   text-align: center;
-  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
 }
-.mob-discover-card span {
-  font-size: 22px;
-  display: block;
-  margin-bottom: 4px;
+.bf-cat-emoji { font-size: 22px; }
+.bf-cat-name { font-size: 11px; font-weight: 600; color: #fff; }
+
+/* Bottom Nav */
+.bf-bottom-nav {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 8px 4px 18px;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-top: 0.5px solid rgba(255, 255, 255, 0.06);
 }
-.mob-discover-card div {
-  font-size: 11px;
-  font-weight: 600;
+.bf-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 44px;
+}
+.bf-nav-icon { font-size: 18px; filter: grayscale(0.7) opacity(0.54); }
+.bf-nav-active .bf-nav-icon { filter: none; }
+.bf-nav-label {
+  font-size: 8px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.54);
+  font-family: 'Inter', sans-serif;
+}
+.bf-nav-label-active { color: #fff; font-weight: 600; }
+.bf-nav-avatar-inactive {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  border: 1.5px solid rgba(255,255,255,0.16);
+  color: rgba(255,255,255,0.54);
+  font-size: 9px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Inter', sans-serif;
 }
 
 @media (max-width: 1100px) {
